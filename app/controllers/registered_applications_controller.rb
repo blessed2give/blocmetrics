@@ -5,6 +5,7 @@ class RegisteredApplicationsController < ApplicationController
 
   def show
     @registered_application = current_user.registered_applications.find(params[:id])
+    @events = @registered_application.events.group_by(&:name)
   end
 
   def new
@@ -13,6 +14,7 @@ class RegisteredApplicationsController < ApplicationController
 
   def create
     @registered_application = current_user.registered_applications.new
+    @registered_application.name = params[:registered_application][:name]
     @registered_application.url = params[:registered_application][:url]
 
     if @registered_application.save
@@ -28,7 +30,7 @@ class RegisteredApplicationsController < ApplicationController
     @registered_application = current_user.registered_applications.find(params[:id])
 
     if @registered_application.destroy
-      flash[:notice] = "\"#{@registered_application.url}\" was successfully deleted!"
+      flash[:notice] = "\"#{@registered_application.name}\" was successfully deleted!"
       redirect_to registered_applications_path
     else
       flash[:alert] = "There was an error deleteing the app."
