@@ -1,6 +1,7 @@
 class API::EventsController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :set_access_control_headers
+  skip_before_action :authenticate_user!
   respond_to :json
 
   def set_access_control_headers
@@ -15,7 +16,6 @@ class API::EventsController < ApplicationController
       render json: "Unregistered application", status: :unprocessable_entity
     else
       @event = registered_application.events.build(events_param)
-      @user = registered_application.user
       if @event.save
         render json: "Event create", status: :created
       else
